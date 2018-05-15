@@ -15,8 +15,9 @@ data.Model_Flag = "Window Passing";
 
 %% Get initial condition from the nominal trajectory
 xL = [0.5;-0.5;2.5-0.5];
+xL = [0;0;2.5];
 vL = zeros(3,1);
-th = 135*pi/180;
+th = 180*pi/180;
 q = [-sin(th);0;cos(th)];
 omega = [0;0;0];
 R = eye(3,3);

@@ -60,39 +60,17 @@ el = l - ld; del = dl - dld;
 eL = xL - xLd; deL = vL - vLd;
 
 %% Parameters of two controllers
-kl = 1; kdl = 1;
-epsilon_bar = 0.8;
-kp_xy = 0.01/epsilon_bar^2 ; kd_xy = 0.02/epsilon_bar ;
-kx = diag([kp_xy kp_xy 2]) ; kv = diag([kd_xy kd_xy 1.5]) ;
+kl = 10; kdl = 1;
+kx = diag([1 1 2]); kv = diag([2 2 1.5]);
 
 %% Parameters of System
-alpha1 = (1/a)*(mQ*mL*a^2+Jp*(mQ+mL));
-alpha2 = (1/a)*(mQ*mL*a^2+Jp*(mQ+mL));
-beta1 = -mL*a; beta2 = Jp/a; 
-gamma1 = -(mQ+mL); gamma2 = -mQ;
+D = [diag(repmat(mQ+mL,3,1)),-mQ*q;-a*mL*q',-Jp/a];
 
 %% Controller of Load Position
-A = (gamma2*(alpha1*ddld- kl*el -kdl*del)*q - gamma1*(alpha2*aLd...
-    +alpha2*g*e3-kx*eL-kv*deL))./(beta1*gamma2-beta2*gamma1)...
-    +mQ*l*vec_dot(dq,dq)*q;
-
-% qd = -(alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL)...
-%     /norm(alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL);
+temp = D*[vLd+g*e3-kx*eL-kv*deL;ddld-kl*el-kdl*del] + [mQ*l*vec_dot(dq,dq)*q;0];
+A = temp(1:3); tau = temp(4);
 qd = -A/norm(A);
 
-tau = (beta2.*((alpha1*ddld- kl*el -kdl*del))-...
-    beta1.*(vec_dot((alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL),q)))...
-    ./(beta2*gamma1-beta1*gamma2);
-
-% Design Tester with tau \cdot q
-tauq = (beta2*((alpha1*ddld- kl*el -kdl*del))*q-...
-    beta1.*((alpha2*aLd+alpha2*g*e3 -kx*eL-kv*deL)))...
-    ./(beta2*gamma1-beta1*gamma2);
-
-% qd = tauq/norm(tauq);
-% disp(qd);
-% disp(tau*q-tauq);
-% pause(1);
 %% Load Attitude Controller
 epsilon_q = 0.5;
 err_q = hat_map(q)^2*qd;
@@ -107,12 +85,12 @@ b3c = F / norm(F);
 f = vec_dot(F, R(:,3));
 
 %% Return to the normalized dynamical equations and Get values of l_dot dl_dot xL_dot vL_dot
+H = [q*(vec_dot(q,f*b3)-mQ*l*vec_dot(dq,dq));tau];
+temp2 = inv(D)*H-[g*e3;0];
 l_dot = dl;
-dl_dot = (beta1*(vec_dot(q,f*b3) - mQ*l*vec_dot(dq,dq) )...
-    +gamma1*tau)./(alpha1);
+dl_dot = temp2(4);
 xL_dot = vL;
-vL_dot = (beta2*((vec_dot(q,f*b3)-mQ*l*vec_dot(dq,dq))*q )...
-    +gamma2*tau*q)./(alpha2)-g*e3;
+vL_dot = temp2(1:3);
 
 %% Quadrotor Attitude Controller
 b1d = e1;
@@ -143,7 +121,8 @@ omega_dot = -(1/(mQ*l))*(vec_cross(q,f*b3) + 2*mQ*dl*omega);
 Omega_dot = J\( -vec_cross(Omega, J*Omega)+M-tau*b1);
 dx = [xL_dot; vL_dot; q_dot; omega_dot; reshape(R_dot,[9,1]); Omega_dot;...
       l_dot; dl_dot];
-  
+disp(eL)
+
 if nargout <= 1
    fprintf('Simulation time %0.4f seconds \n',t);
 end
