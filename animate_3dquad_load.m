@@ -84,8 +84,8 @@ for i=1:length(t)
 %     text(-1.3,2.4,s,'FontAngle','italic','FontWeight','bold');
     drawnow;
     set(axes1,'XLim',figure_x_limits,'YLim',figure_y_limits,'ZLim',figure_z_limits);
-    if MAKE_MOVIE, M(:,i) = getframe; end
-    writeVideo(v,M(:,i));
+%     if MAKE_MOVIE, M(:,i) = getframe; end
+%     writeVideo(v,M(:,i));
 %         aviobj = addframe(aviobj, fig1);
     if i ==length(t)
         drawtwo(axes1, x(1,:)');
