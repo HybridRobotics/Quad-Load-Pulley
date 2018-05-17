@@ -151,5 +151,14 @@ dx = [xL_dot; vL_dot; q_dot; omega_dot; reshape(R_dot,[9,1]); Omega_dot;...
 if nargout <= 1
    fprintf('Simulation time %0.4f seconds \n',t);
 end
+lambda = 10;
+LyaX = 0.5*kx(1,1)*eL(1)^2+0.5*kx(2,2)*eL(2)^2+0.5*kx(3,3)*eL(3)^2+norm(deL)^2;
+Lyal = kl*el^2+del^2;
+Lyaq = lambda*(norm(err_q)^2 + norm(q_dot-vec_cross(vec_cross(qd,dqd),q)));
+Lya = LyaX + Lyal + Lyaq;
+disp(LyaX)
+disp(Lyal)
+disp(Lyaq)
+disp(Lya)
 
 end
