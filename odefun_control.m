@@ -1,4 +1,4 @@
-function[dx, xLd, Rd, qd, ld, f, M, tau] = odefun_control(t,x,data,obsta)
+function[dx, xLd, Rd, qd, ld, f, M, tau] = odefun_control(t,x,data)
 %% Constants
 mL = data.params.mL ;
 g = data.params.g ;
@@ -12,27 +12,6 @@ Jp = data.params.Jp;
 
 %% Desired States
 %---------------%
-xLd = zeros(3,1);
-vLd = zeros(3,1);
-aLd = zeros(3,1);
-% xLd = [1-cos(t);sin(t);0];
-% vLd = [sin(t);cos(t);0];
-% aLd = [cos(t);-sin(t);0];
-xLd = [ 3*sin(t); 3-1*cos(t);0];
-vLd = [ 3*cos(t); 1*sin(t);0];
-aLd = [-3*sin(t); 1*cos(t);0];
-% th = -165*pi/180 ;
-qd = [0;0;-1];
-% qd = [ 0; sin(th); cos(th)];
-dqd = zeros(3,1);
-d2qd = zeros(3,1);
-Rd = eye(3);
-Omegad = zeros(3,1);
-dOmegad = zeros(3,1);
-% ld = 1;
-% dld = 0;
-% ddld = 0;
-dx = [];
 
 % Case 1: Testing
 %[xLd,vLd,aLd,ld,dld,ddld,qd,dqd,d2qd,~,Omegad,dOmegad] = get_nom_traj(data.params, get_load_traj(t));
@@ -54,45 +33,23 @@ b3 = R(:,3);
 b1 = R(:,1);
 
 %% Error Function of Cable Length
-el = l - ld; del = dl - dld;
+err_l = l - ld; err_dl = dl - dld;
 
 %% Error Function of Load Position
-eL = xL - xLd; deL = vL - vLd;
+err_x = xL - xLd; err_v = vL - vLd;
 
 %% Parameters of two controllers
-kl = 1; kdl = 1;
-epsilon_bar = 0.8;
-kp_xy = 0.01/epsilon_bar^2 ; kd_xy = 0.02/epsilon_bar ;
-kx = diag([kp_xy kp_xy 2]) ; kv = diag([kd_xy kd_xy 1.5]) ;
+kl = 140; kdl = 140;
+kx = diag([2 2 120]); kv = diag([4 4 80]);
 
 %% Parameters of System
-alpha1 = (1/a)*(mQ*mL*a^2+Jp*(mQ+mL));
-alpha2 = (1/a)*(mQ*mL*a^2+Jp*(mQ+mL));
-beta1 = -mL*a; beta2 = Jp/a; 
-gamma1 = -(mQ+mL); gamma2 = -mQ;
+D = [diag(repmat(mQ+mL,3,1)),-mQ*q;-a*mL*q',-Jp/a];
 
 %% Controller of Load Position
-A = (gamma2*(alpha1*ddld- kl*el -kdl*del)*q - gamma1*(alpha2*aLd...
-    +alpha2*g*e3-kx*eL-kv*deL))./(beta1*gamma2-beta2*gamma1)...
-    +mQ*l*vec_dot(dq,dq)*q;
-
-% qd = -(alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL)...
-%     /norm(alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL);
+temp = D*[aLd+g*e3-kx*err_x-kv*err_v;ddld-kl*err_l-kdl*err_dl] + [mQ*l*vec_dot(dq,dq)*q;0];
+A = temp(1:3); tau = temp(4);
 qd = -A/norm(A);
 
-tau = (beta2.*((alpha1*ddld- kl*el -kdl*del))-...
-    beta1.*(vec_dot((alpha2*aLd+alpha2*g*e3-kx*eL-kv*deL),q)))...
-    ./(beta2*gamma1-beta1*gamma2);
-
-% Design Tester with tau \cdot q
-tauq = (beta2*((alpha1*ddld- kl*el -kdl*del))*q-...
-    beta1.*((alpha2*aLd+alpha2*g*e3 -kx*eL-kv*deL)))...
-    ./(beta2*gamma1-beta1*gamma2);
-
-% qd = tauq/norm(tauq);
-% disp(qd);
-% disp(tau*q-tauq);
-% pause(1);
 %% Load Attitude Controller
 epsilon_q = 0.5;
 err_q = hat_map(q)^2*qd;
@@ -107,12 +64,17 @@ b3c = F / norm(F);
 f = vec_dot(F, R(:,3));
 
 %% Return to the normalized dynamical equations and Get values of l_dot dl_dot xL_dot vL_dot
+H = [vec_dot(q,f*b3)*q-mQ*l*vec_dot(dq,dq)*q;tau];
+temp2 = D\H-[g*e3;0];
 l_dot = dl;
-dl_dot = (beta1*(vec_dot(q,f*b3) - mQ*l*vec_dot(dq,dq) )...
-    +gamma1*tau)./(alpha1);
+dl_dot = temp2(4);
 xL_dot = vL;
-vL_dot = (beta2*((vec_dot(q,f*b3)-mQ*l*vec_dot(dq,dq))*q )...
-    +gamma2*tau*q)./(alpha2)-g*e3;
+vL_dot = temp2(1:3);
+
+kl = 1; kdl = 1;
+epsilon_bar = 0.8;
+kp_xy = 0.01/epsilon_bar^2 ; kd_xy = 0.02/epsilon_bar ;
+kx = diag([kp_xy kp_xy 2]) ; kv = diag([kd_xy kd_xy 1.5]) ;
 
 %% Quadrotor Attitude Controller
 b1d = e1;
@@ -143,8 +105,11 @@ omega_dot = -(1/(mQ*l))*(vec_cross(q,f*b3) + 2*mQ*dl*omega);
 Omega_dot = J\( -vec_cross(Omega, J*Omega)+M-tau*b1);
 dx = [xL_dot; vL_dot; q_dot; omega_dot; reshape(R_dot,[9,1]); Omega_dot;...
       l_dot; dl_dot];
-  
+
 if nargout <= 1
    fprintf('Simulation time %0.4f seconds \n',t);
 end
+
+%% Lyapunov Function
+
 end

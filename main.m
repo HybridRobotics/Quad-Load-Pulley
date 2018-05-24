@@ -11,8 +11,6 @@ data.params.e3 = [0;0;1];
 data.params.a = 0.03;
 data.params.Jp = 3e-4;
 
-data.Model_Flag = "Window Passing";
-
 %% Get initial condition from the nominal trajectory
 xL = [0.5;-0.5;2.5-0.5];
 vL = zeros(3,1);
@@ -32,7 +30,6 @@ end
 x_0 = [xL; vL; q; omega; reshape(R, 9,1); Omega; l; dl];
 
 %% Window Passing Case (Cable Length Generation)
-% if data.Model_Flag == "Window Passing"
 % we use polynomial function to generate aimed cable length generation
 T = 10;
 WindowNum = [0,0.25*T,0.5*T,0.75*T,T];
@@ -48,7 +45,6 @@ data.obsta.dl_interp = diff(data.obsta.l_interp,1);
 data.obsta.d2l_interp = diff(data.obsta.l_interp,2);
 data.obsta.d3l_interp = diff(data.obsta.l_interp,3);
 data.obsta.d4l_interp = diff(data.obsta.l_interp,4);
-% end
 
 %% Solving Dynamical Equations
 odeopts = [];

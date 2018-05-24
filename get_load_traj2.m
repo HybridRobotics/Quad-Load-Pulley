@@ -1,4 +1,5 @@
  function load_traj = get_load_traj2(t)
+%% Test: Circular Displacement  
 a_x = 3;
 a_y = 3;
 a_z = 2;

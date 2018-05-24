@@ -59,8 +59,8 @@ if(MAKE_MOVIE)
     M = moviein(length(t)) ;
 end
 % aviobj = avifile('sample2.avi','compression','None');
-v = VideoWriter('newfile.avi','Uncompressed AVI');
-open(v)
+% v = VideoWriter('newfile.avi','Uncompressed AVI');
+% open(v)
 for i=1:length(t)
     %set(axes1,'XLim',figure_x_limits+pH(i,1)) ;
     drawone(axes1, x(i,:)');
@@ -84,8 +84,8 @@ for i=1:length(t)
 %     text(-1.3,2.4,s,'FontAngle','italic','FontWeight','bold');
     drawnow;
     set(axes1,'XLim',figure_x_limits,'YLim',figure_y_limits,'ZLim',figure_z_limits);
-    if MAKE_MOVIE, M(:,i) = getframe; end
-    writeVideo(v,M(:,i));
+%     if MAKE_MOVIE, M(:,i) = getframe; end
+%     writeVideo(v,M(:,i));
 %         aviobj = addframe(aviobj, fig1);
     if i ==length(t)
         drawtwo(axes1, x(1,:)');
@@ -100,7 +100,7 @@ for i=1:length(t)
     end
 end
 % aviobj = close(aviobj);
-close(v)
+% close(v)
 
 end
 

@@ -1,4 +1,5 @@
 function load_traj = get_load_traj(t)
+%% Test: Circular Displacement without windows
 f1 = 1/4;
 f2 = 1/5;
 f3 = 1/7;
