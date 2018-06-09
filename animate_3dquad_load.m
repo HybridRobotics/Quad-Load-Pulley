@@ -95,7 +95,7 @@ for i=1:length(t)
         drawtwo(axes1, x(floor(length(t)/4*3),:)');
         drawtwo(axes1, x(floor(length(t)/4),:)');
 
-        saveas(fig1,'SnapShot_UAV.png')
+        saveas(fig1,'SnapShot_Motion.png')
     else
     end
 end
