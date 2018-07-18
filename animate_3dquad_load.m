@@ -94,8 +94,11 @@ for i=1:length(t)
         drawtwo(axes1, x(floor(length(t)/4*2),:)');
         drawtwo(axes1, x(floor(length(t)/4*3),:)');
         drawtwo(axes1, x(floor(length(t)/4),:)');
-
-        saveas(fig1,'SnapShot_Motion.png')
+        opts.print.index = 4;
+        opts.print.filename = 'Snapshot';
+        opts.print.ext = '-depsc';
+        print_fig(opts,fig1);
+        %saveas(fig1,'SnapShot_Motion.png')
     else
     end
 end
