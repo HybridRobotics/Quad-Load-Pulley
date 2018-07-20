@@ -89,7 +89,9 @@ for i=1:length(t)
 %         aviobj = addframe(aviobj, fig1);
     if i ==length(t)
         drawtwo(axes1, x(1,:)');
+        drawtwo(axes1, x(floor(length(t)/16),:)');
         drawtwo(axes1, x(floor(length(t)/8),:)');
+        drawtwo(axes1, x(floor(3*length(t)/16),:)');
         drawtwo(axes1, x(floor(length(t)/4),:)');
         drawtwo(axes1, x(floor(length(t)/4*2),:)');
         drawtwo(axes1, x(floor(length(t)/4*3),:)');
