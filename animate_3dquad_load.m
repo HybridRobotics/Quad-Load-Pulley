@@ -64,7 +64,7 @@ end
 for i=1:length(t)
     %set(axes1,'XLim',figure_x_limits+pH(i,1)) ;
     drawone(axes1, x(i,:)');
-    % Plotting Three Windows
+    %% Plotting Three Windows
     width = 0.8;
     height1 = 0.6; height2 = 0.3; height3 = 0.6;
     text(3-width,3+width,4.5+height1*2,'Window 1 (height = 0.6m)','FontSize',28);
@@ -73,20 +73,21 @@ for i=1:length(t)
     plotrectangle([3;3-width/2;2.0+2.5-height1/2],[3;3-width/2;2.0+2.5+height1/2],...
         [3;3+width/2;2.0+2.5+height1/2],[3;3+width/2;2.0+2.5-height1/2],'g');
     plotrectangle([6-width/2;0;2.5-height2/2],[6-width/2;0;2.5+height2/2],...
-        [6+width/2;0;2.5+height2/2],[6+width/2;0;2.5-height2/2],'c');
+        [6+width/2;0;2.5+height2/2],[6+width/2;0;2.5-height2/2],'g');
     plotrectangle([3;-3-width/2;-2.0+2.5-height3/2],[3;-3-width/2;-2.0+2.5+height3/2],...
-        [3;-3+width/2;-2.0+2.5+height3/2],[3;-3+width/2;-2.0+2.5-height3/2],'y');
+        [3;-3+width/2;-2.0+2.5+height3/2],[3;-3+width/2;-2.0+2.5-height3/2],'g');
     plot3(x(max(1,i-hist):i, 1), x(max(1,i-hist):i, 2), x(max(1,i-hist):i, 3), 'b', 'LineWidth', 4) ;
     plot3(xLd(max(1,i-hist):i, 1), xLd(max(1,i-hist):i, 2), xLd(max(1,i-hist):i, 3), 'r', 'LineWidth', 4) ;
-%     plot3(xorig(:, 1), xorig(:, 2), xorig(:, 3), 'b') ;
-%     plot3(xLdorig(:, 1), xLdorig(:, 2), xLdorig(:, 3), 'r') ;
-%     s = sprintf('Running\n t = %1.2fs \n 1/%d realtime speed',t(i), RATE/25);
-%     text(-1.3,2.4,s,'FontAngle','italic','FontWeight','bold');
+    % plot3(xorig(:, 1), xorig(:, 2), xorig(:, 3), 'b') ;
+    % plot3(xLdorig(:, 1), xLdorig(:, 2), xLdorig(:, 3), 'r') ;
+    % s = sprintf('Running\n t = %1.2fs \n 1/%d realtime speed',t(i), RATE/25);
+    % text(-1.3,2.4,s,'FontAngle','italic','FontWeight','bold');
     drawnow;
     set(axes1,'XLim',figure_x_limits,'YLim',figure_y_limits,'ZLim',figure_z_limits);
-%     if MAKE_MOVIE, M(:,i) = getframe; end
-%     writeVideo(v,M(:,i));
-%         aviobj = addframe(aviobj, fig1);
+    % if MAKE_MOVIE, M(:,i) = getframe; end
+    % writeVideo(v,M(:,i));
+    %         aviobj = addframe(aviobj, fig1);
+    %% Motion snapshots
     if i ==length(t)
         drawtwo(axes1, x(1,:)');
         drawtwo(axes1, x(floor(length(t)/16),:)');
@@ -333,4 +334,12 @@ zlabel('Z')
 %         L = Obstacles_Lines{j} ;
 %         plot([L(:,1); L(1,1)], [L(:,2); L(1,2)], 'k', 'LineWidth', 2) ;
 %     end
+end
+
+function plotrectangle(A,B,C,D,color)
+x = [A(1);B(1);C(1);D(1);A(1)];
+y = [A(2);B(2);C(2);D(2);A(2)];
+z = [A(3);B(3);C(3);D(3);A(3)];
+h = plot3(x,y,z,color);
+set(h,'linewidth',2);
 end

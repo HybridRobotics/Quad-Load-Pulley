@@ -1,5 +1,4 @@
 %% Quadrotor Attitude Pendulum SO(3)x S(2)x R - Dynamics Simulation and Geometry Control
-close all;
 %% Parameters
 data.params.mQ = 0.5;
 data.params.mL = 0.087;
@@ -29,11 +28,26 @@ end
 
 x_0 = [xL; vL; q; omega; reshape(R, 9,1); Omega; l; dl];
 
+
 %% Window Passing Case (Cable Length Generation)
 % we use polynomial function to generate aimed cable length generation
 T = 10;
 WindowNum = [0,0.25*T,0.5*T,0.75*T,T];
 LengthNum = [0.25,0.2,0.1,0.2,0.25];
+% Line Widths
+lw1 = 5 ; lw2 = 2 ; lws = 3 ;
+
+% colors
+c1 = 'r' ; c2 = 'k' ; cs = 'g' ;
+
+% Gap for subplot1
+subplot1_gap = [0 0];
+subplot1a_gap = [0 0.08];
+
+% Paper position size
+paperpos_sz_1fig = [0.25 2.5 8 2];%2.4] ;
+paperpos_sz_2fig = [0.25 2.5 8 3];%4] ;
+paperpos_sz_4fig = [0.25 2.5 8 8.5];
 
 Res = polyfit(WindowNum,LengthNum,4);
 TimeSpan = linspace(0,T,1000);
@@ -80,48 +94,134 @@ ind = round(linspace(1, length(t), round(0.1*length(t)))) ;
 
 % Input Moment
 figure;
-plot(t(ind), M(ind,1),t(ind), M(ind,2),t(ind), M(ind,3)) ;
-legend('M(1)','M(2)','M(3)');title('Quad-Moment');
-grid on ; xlabel('Time (s)') ;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind), M(ind,1),'r'); hold on;
+plot(t(ind), M(ind,2),'b');
+plot(t(ind), M(ind,3),'y');
+legend({'$$M_1$$','$$M_2$$','$$M_3$$'},'interpreter','latex');
+title('Input Moment');
+grid on ; 
+xlabel('Time (s)');
 
 % Input Thrust
 figure;
-plot(t(ind), f(ind,1)) ;
-legend('f'); title('Quad-Thrust');
-grid on ; xlabel('Time (s)')
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind), f(ind,1));
+legend({'$$f$$'},'interpreter','latex');
+title('Input Thrust');
+grid on;
+xlabel('Time (s)');
 
 % Input Torque
 figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
 plot(t(ind), tau(ind,1)) ;
-legend('\tau'); title('Pulley-Torque');
-grid on ; xlabel('Time (s)')
+legend({'$$\tau$$'},'interpreter','latex');
+title('Input Torque');
+grid on;
+xlabel('Time (s)');
 
 % Configuration Errors
-figure ; plot(t(ind), psi_R(ind)) ;
-grid on ; xlabel('Time (s)') ; title('psi-R')
-figure ; plot(t(ind), psi_q(ind)) ;
-grid on ; xlabel('Time (s)') ; title('psi-q')
-figure; plot(t(ind),psi_exL(ind));
-grid on; xlabel('Time (s)'); title('position error');
-figure; plot(t(ind),el(ind));
-grid on; xlabel('Time (s)'); title('cable length error');
-figure; plot(t(ind),psi_exL1(ind),t(ind),psi_exL2(ind),t(ind),psi_exL3(ind))
-grid on; xlabel('Time (s)'); title('Position Error');
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind), psi_R(ind)) ;
+grid on;
+xlabel('Time (s)');
+title('$$\psi_R$$','interpreter','latex');
+
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind), psi_q(ind)) ;
+grid on;
+xlabel('Time (s)');
+title('$$\psi_q$$','interpreter','latex');
+
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind),psi_exL(ind));
+grid on;
+xlabel('Time (s)');
+title('$$||e_{x_L}||$$','interpreter','latex');
+
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind),el(ind));
+grid on;
+xlabel('Time (s)');
+title('cable length error');
+
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind),psi_exL1(ind),'r-'); hold on;
+plot(t(ind),psi_exL2(ind),'y.-');
+plot(t(ind),psi_exL3(ind),'b--');
+grid on;
+legend('x','y','z')
+xlabel('Time (s)');
+title('Position Error');
+
 % Load Position
-figure ; plot(t, x(:, 1:3)) ;
-grid ; title('xL') ; legend('x','y','z') ; xlabel('Time (s)') ;
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t, x(:, 1:3)) ;
+grid on; title('xL');
+legend('x','y','z');
+xlabel('Time (s)') ;
 
 % Quadrotor Attitude
-figure ; plot(t(ind), phi_d(ind)*180/pi, 'b:', t(ind), theta_d(ind)*180/pi, 'g:', t(ind), psi_d(ind)*180/pi, 'r:') ;
-hold on ; plot(t(ind), phi(ind)*180/pi, 'b', t(ind), theta(ind)*180/pi, 'g', t(ind), psi(ind)*180/pi, 'r') ;
-grid ; xlabel('Time (s)') ; ylabel('deg') ; title('Quad Atttitude') ;
-legend('phi_d','theta_d','psi_d','phi','theta','psi');
+figure;
+subplot1(1,1, 'Gap', subplot1_gap);
+set(gcf, 'PaperPositionMode', 'manual');
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperPosition', paperpos_sz_1fig);
+plot(t(ind), phi_d(ind)*180/pi, 'b:'); hold on;
+plot(t(ind), theta_d(ind)*180/pi, 'g:');
+plot(t(ind), psi_d(ind)*180/pi, 'r:'); 
+plot(t(ind), phi(ind)*180/pi, 'b'); 
+plot(t(ind), theta(ind)*180/pi, 'g'); 
+plot(t(ind), psi(ind)*180/pi, 'r') ;
+grid on; 
+xlabel('Time (s)');
+ylabel('deg');
+title('Quad Atttitude') ;
+legend({'$$\phi_d$$','$$\theta_d$$','$$\psi_d$$','$$\phi$$','$$\theta$$','$$\psi$$'},'interpreter','latex');
 
 % Load Attitude
-figure ; plot(t(ind), qd(ind,1), 'b:',t(ind), qd(ind,2), 'g:',t(ind), qd(ind,3), 'r:') ;
-hold on ; plot(t(ind), x(ind, 7),'b',t(ind), x(ind, 8),'g',t(ind), x(ind, 9),'r') ;
-xlabel('Time (s)');title('Load Attitude') ; grid ;
-legend('q_d1','q_d2','q_d3','q_1','q_2','q_3');
+figure;
+plot(t(ind), qd(ind,1), 'b:',t(ind), qd(ind,2), 'g:',t(ind), qd(ind,3), 'r:') ;
+hold on;
+plot(t(ind), x(ind, 7),'b',t(ind), x(ind, 8),'g',t(ind), x(ind, 9),'r') ;
+grid on;
+xlabel('Time (s)');
+title('Load Attitude');
+legend({'$$q_{d1}$$','$$q_{d2}$$','$$q_{d3}$$','$$q_1$$','$$q_2$$','$$q_3$$'},'interpreter','latex');
 
 %% Animation
 animate_3dquad_load(t, x, t(ind), xLd(ind,:));

@@ -1,9 +1,11 @@
  function load_traj = get_load_traj2(t)
-%% Test: Circular Displacement  
+
+ %% Test: Circular Displacement  
 a_x = 3;
 a_y = 3;
 a_z = 2;
 f = 0.1;
+
 %% Desired Load Position Generation
 load_traj.xL = [a_x*(1 - cos(2*pi*f*t));
     a_y * sin(2*pi*f*t);

@@ -1,1 +1,11 @@
 .DS_Store
+
+# Matlab files
+*.fig
+*.mat
+*.png
+*.eps
+
+# Folders
+Data/
+Figures/

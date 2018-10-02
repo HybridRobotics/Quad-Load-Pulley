@@ -96,7 +96,7 @@ M(M>2)=2;
 M(M<-2)=-2;
 f(f>10)=10;
 f(f<0)=0;
-tau (tau>0.1)=0.1;
+tau(tau>0.1)=0.1;
 
 %% Quadrotor Attitude Dynamics
 R_dot = R*hat_map(Omega);

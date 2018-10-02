@@ -3,6 +3,7 @@
 % load trajectory and higher order time deriviatives.
 function [xLd,vLd,aLd,l,dl,d2l,p,dp,d2p,...
     R,Omega,dOmega,daLd,d2aLd,d3p,dR,d2R,f,M] = get_nom_traj(params, load_traj)
+
 %% Constants
 mQ = params.mQ ;
 mL = params.mL ;
