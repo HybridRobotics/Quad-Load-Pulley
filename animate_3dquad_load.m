@@ -58,9 +58,9 @@ MAKE_MOVIE = 1;
 if(MAKE_MOVIE)
     M = moviein(length(t)) ;
 end
-% aviobj = avifile('sample2.avi','compression','None');
-% v = VideoWriter('newfile.avi','Uncompressed AVI');
-% open(v)
+% aviobj = avifile('simulation.avi','compression','None');
+v = VideoWriter('simulation.avi','Uncompressed AVI');
+open(v)
 for i=1:length(t)
     %set(axes1,'XLim',figure_x_limits+pH(i,1)) ;
     drawone(axes1, x(i,:)');
@@ -84,12 +84,13 @@ for i=1:length(t)
     % text(-1.3,2.4,s,'FontAngle','italic','FontWeight','bold');
     drawnow;
     set(axes1,'XLim',figure_x_limits,'YLim',figure_y_limits,'ZLim',figure_z_limits);
-    % if MAKE_MOVIE, M(:,i) = getframe; end
-    % writeVideo(v,M(:,i));
-    %         aviobj = addframe(aviobj, fig1);
+    if MAKE_MOVIE, M(:,i) = getframe; end
+	writeVideo(v,M(:,i));
+	% aviobj = addframe(aviobj, fig1);
     %% Motion snapshots
     if i ==length(t)
-        drawtwo(axes1, x(1,:)');
+        break;
+		drawtwo(axes1, x(1,:)');
         drawtwo(axes1, x(floor(length(t)/16),:)');
         drawtwo(axes1, x(floor(length(t)/8),:)');
         drawtwo(axes1, x(floor(3*length(t)/16),:)');
@@ -101,13 +102,11 @@ for i=1:length(t)
         opts.print.filename = 'Snapshot';
         opts.print.ext = '-depsc';
         print_fig(opts,fig1);
-        %saveas(fig1,'SnapShot_Motion.png')
-    else
+        % saveas(fig1,'SnapShot_Motion.png')
     end
 end
 % aviobj = close(aviobj);
-% close(v)
-
+close(v)
 end
 
 function drawone(parent, x)
