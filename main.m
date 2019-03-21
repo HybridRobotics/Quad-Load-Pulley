@@ -35,19 +35,19 @@ T = 10;
 WindowNum = [0,0.25*T,0.5*T,0.75*T,T];
 LengthNum = [0.25,0.2,0.1,0.2,0.25];
 % Line Widths
-lw1 = 5 ; lw2 = 2 ; lws = 3 ;
+lw1 = 5 ; lw2 = 2 ; lw3 = 3 ;
 
 % colors
-c1 = 'r' ; c2 = 'k' ; cs = 'g' ;
+c1 = 'r' ; c2 = 'k' ; c3 = 'g' ;
 
 % Gap for subplot1
 subplot1_gap = [0 0];
 subplot1a_gap = [0 0.08];
 
 % Paper position size
-paperpos_sz_1fig = [0.25 2.5 8 2];%2.4] ;
-paperpos_sz_2fig = [0.25 2.5 8 3];%4] ;
-paperpos_sz_4fig = [0.25 2.5 8 8.5];
+% paperpos_sz_1fig = [0.25 2.5 8 2];%2.4] ;
+% paperpos_sz_2fig = [0.25 2.5 8 3];%4] ;
+paperpos_sz_1fig = [0.25 2.5 4 2];
 
 Res = polyfit(WindowNum,LengthNum,4);
 TimeSpan = linspace(0,T,1000);
@@ -98,9 +98,9 @@ subplot1(1,1, 'Gap', subplot1_gap);
 set(gcf, 'PaperPositionMode', 'manual');
 set(gcf, 'PaperUnits', 'inches');
 set(gcf, 'PaperPosition', paperpos_sz_1fig);
-plot(t(ind), M(ind,1),'r'); hold on;
-plot(t(ind), M(ind,2),'b');
-plot(t(ind), M(ind,3),'y');
+plot(t(ind), M(ind,1),c1, 'Linewidth', lw1); hold on;
+plot(t(ind), M(ind,2),c2, 'Linewidth', lw2);
+plot(t(ind), M(ind,3),c3, 'Linewidth', lw3);
 legend({'$$M_1$$','$$M_2$$','$$M_3$$'},'interpreter','latex');
 title('Input Moment');
 grid on ; 
@@ -169,6 +169,7 @@ set(gcf, 'PaperPosition', paperpos_sz_1fig);
 plot(t(ind),el(ind));
 grid on;
 xlabel('Time (s)');
+ylabel('(m)');
 title('cable length error');
 
 figure;
@@ -176,12 +177,13 @@ subplot1(1,1, 'Gap', subplot1_gap);
 set(gcf, 'PaperPositionMode', 'manual');
 set(gcf, 'PaperUnits', 'inches');
 set(gcf, 'PaperPosition', paperpos_sz_1fig);
-plot(t(ind),psi_exL1(ind),'r-'); hold on;
-plot(t(ind),psi_exL2(ind),'y.-');
-plot(t(ind),psi_exL3(ind),'b--');
+plot(t(ind),psi_exL1(ind),c1,'Linewidth',lw1); hold on;
+plot(t(ind),psi_exL2(ind),c2,'Linewidth',lw2);
+plot(t(ind),psi_exL3(ind),c3,'Linewidth',lw3);
 grid on;
 legend('x','y','z')
 xlabel('Time (s)');
+ylabel('(m)');
 title('Position Error');
 
 % Load Position
